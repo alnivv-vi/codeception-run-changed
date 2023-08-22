@@ -67,30 +67,38 @@ class RunDiff extends Extension
 
     public function build()
     {
-        $commitHash = exec('git rev-parse HEAD');
+//        $commitHash = exec('git rev-parse HEAD');
+//        $diff = shell_exec("git diff --name-only master $commitHash -- $filePath");
+//        echo $diff;
         // Get the changed files between the current branch and the master branch
         exec('git diff --name-only master...HEAD', $changed_files);
-
-        // Iterate over each changed file
         foreach ($changed_files as $file) {
-            // Check if the file is a PHP file
-            if (pathinfo($file, PATHINFO_EXTENSION) === 'php') {
-                // Get the diff of the changes in the file for the specified commit hash
-                exec("git diff " . $commitHash . "..HEAD -- " . $file, $diff);
-                print_r($diff);
-                echo '_______________' . "\n";
-                // Iterate over each line in the diff
-                foreach ($diff as $line) {
-                    // Check if the line contains a function declaration
-                    if (preg_match('/^\+.*function\s+(\w+)\(/', $line, $matches)) {
-                        $function_name = $matches[1];
-                        $full_path = realpath($file);
-                        echo "Function: {$function_name}\n";
-                        echo "Path: {$full_path}\n\n";
-                    }
-                }
-            }
+            exec('git diff master... ' . $file, $output);
+            print_r($output);
+
         }
+
+//
+//        // Iterate over each changed file
+//        foreach ($changed_files as $file) {
+//            // Check if the file is a PHP file
+//            if (pathinfo($file, PATHINFO_EXTENSION) === 'php') {
+//                // Get the diff of the changes in the file for the specified commit hash
+//                exec("git diff " . $commitHash . "..HEAD -- " . $file, $diff);
+//                print_r($diff);
+//                echo '_______________' . "\n";
+//                // Iterate over each line in the diff
+//                foreach ($diff as $line) {
+//                    // Check if the line contains a function declaration
+//                    if (preg_match('/^\+.*function\s+(\w+)\(/', $line, $matches)) {
+//                        $function_name = $matches[1];
+//                        $full_path = realpath($file);
+//                        echo "Function: {$function_name}\n";
+//                        echo "Path: {$full_path}\n\n";
+//                    }
+//                }
+//            }
+//        }
     }
 
 

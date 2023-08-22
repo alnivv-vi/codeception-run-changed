@@ -14,7 +14,8 @@
     "require": {
 	    "php": "^8",
         "ext-json": "*",
-        "codeception/codeception": "^5.0.3"
+        "codeception/codeception": "^5.0.3",
+        "nikic/php-parser": "^4.17"
     },
     "autoload": {
         "psr-4": {
