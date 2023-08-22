@@ -18,6 +18,10 @@ use function str_replace;
 use function strlen;
 use function substr;
 use function unlink;
+use PhpParser\Error;
+use PhpParser\NodeTraverser;
+use PhpParser\NodeVisitor\NameResolver;
+use PhpParser\ParserFactory;
 
 /**
  * Saves failed tests into tests/_output/failed in order to rerun failed tests.
@@ -75,6 +79,25 @@ class RunDiff extends Extension
         foreach ($changed_files as $file) {
             exec('git diff master... ' . $file, $output);
             print_r($output);
+            $code = file_get_contents($file);
+
+            $parser = (new ParserFactory)->create(ParserFactory::PREFER_PHP7);
+            $traverser = new NodeTraverser;
+            $traverser->addVisitor(new NameResolver);
+
+            try {
+                $stmts = $parser->parse($code);
+                $stmts = $traverser->traverse($stmts);
+
+                // Extract the changed functions
+                foreach ($stmts as $stmt) {
+                    if ($stmt instanceof \PhpParser\Node\Stmt\Function_) {
+                        echo 'Changed function: ' . $stmt->name->name . PHP_EOL;
+                    }
+                }
+            } catch (Error $error) {
+                echo 'Error parsing file: ' . $file . PHP_EOL;
+            }
 
         }
 
