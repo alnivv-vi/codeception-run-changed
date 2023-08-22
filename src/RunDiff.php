@@ -76,7 +76,7 @@ class RunDiff extends Extension
             // Check if the file is a PHP file
             if (pathinfo($file, PATHINFO_EXTENSION) === 'php') {
                 // Get the diff of the changes in the file for the specified commit hash
-                exec("git diff {$commitHash}..HEAD -- {$file}", $diff);
+                exec("git diff " . $commitHash . "..HEAD -- " . $file, $diff);
                 print_r($diff);
                 echo '_______________' . "\n";
                 // Iterate over each line in the diff
