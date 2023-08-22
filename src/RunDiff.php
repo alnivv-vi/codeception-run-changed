@@ -62,23 +62,46 @@ class RunDiff extends Extension
         }
         $logPath = str_replace($this->getRootDir(), '', $this->getLogDir()); // get local path to logs
         $this->_reconfigure(['groups' => [$this->group => $logPath . $this->group]]);
+        $this->build();
     }
 
-    public function saveFailed(PrintResultEvent $event): void
+    public function build()
     {
-        $file = $this->getLogDir() . $this->group;
+        // Get the list of changed files compared to the master branch
+        $changedFiles = shell_exec('git diff --name-only origin/master');
+//        echo 'changedFiles: ' . $changedFiles;
+        // Split the output into an array of file paths
+        $changedFilesArray = explode("\n", trim($changedFiles));
+//        echo 'changedFilesArray: ';
+
+        print_r($changedFiles);
+
+        // Remove any empty or non-existent file paths
+        $changedFilesArray = array_filter($changedFilesArray, function ($file) {
+            return !empty($file) && file_exists($file);
+        });
+
+        // Print the list of changed files
+        foreach ($changedFilesArray as $file) {
+            echo 'the list of changed files: ' . $file . PHP_EOL . "\n";
+        }
+    }
+
+//    public function saveFailed(PrintResultEvent $event): void
+//    {
+//        $file = $this->getLogDir() . $this->group;
 //        $output = [];
 //            $output[] = $this->localizePath(Descriptor::getTestFullName($);
 //        foreach ($result->errors() as $fail) {
 //            $output[] = $this->localizePath(Descriptor::getTestFullName($fail->getTest()));
 //        }
-
+//
 //        file_put_contents($file, implode("\n", $output));
-    }
-
+//    }
+//
 //    protected function localizePath(string $path): string
 //    {
-//        $root = RunDiff . phprealpath($this->getRootDir()) . DIRECTORY_SEPARATOR;
+//        $root = realpath($this->getRootDir()) . DIRECTORY_SEPARATOR;
 //        if (substr($path, 0, strlen($root)) === $root) {
 //            return substr($path, strlen($root));
 //        }
