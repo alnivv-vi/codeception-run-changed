@@ -67,25 +67,34 @@ class RunDiff extends Extension
 
     public function build()
     {
-        // Get the list of changed files compared to the master branch
-        $changedFiles = shell_exec('git diff --name-only origin/master');
-//        echo 'changedFiles: ' . $changedFiles;
-        // Split the output into an array of file paths
-        $changedFilesArray = explode("\n", trim($changedFiles));
-//        echo 'changedFilesArray: ';
+        $commitHash = exec('git rev-parse HEAD');
+        echo "commit_hash:" . $commitHash . "\n";
 
-        print_r($changedFiles);
+        // Get the changed files between the current branch and the master branch
+        exec('git diff --name-only master...HEAD', $changed_files);
+        print_r($changed_files);
+        echo '_______________' . "\n";
+        // Iterate over each changed file
+        foreach ($changed_files as $file) {
+            // Check if the file is a PHP file
+            if (pathinfo($file, PATHINFO_EXTENSION) === 'php') {
+                // Get the diff of the changes in the file for the specified commit hash
+                exec("git diff {$commitHash}..HEAD -- {$file}", $diff);
 
-        // Remove any empty or non-existent file paths
-        $changedFilesArray = array_filter($changedFilesArray, function ($file) {
-            return !empty($file) && file_exists($file);
-        });
-
-        // Print the list of changed files
-        foreach ($changedFilesArray as $file) {
-            echo 'the list of changed files: ' . $file . PHP_EOL . "\n";
+                // Iterate over each line in the diff
+                foreach ($diff as $line) {
+                    // Check if the line contains a function declaration
+                    if (preg_match('/^\+.*function\s+(\w+)\(/', $line, $matches)) {
+                        $function_name = $matches[1];
+                        $full_path = realpath($file);
+                        echo "Function: {$function_name}\n";
+                        echo "Path: {$full_path}\n\n";
+                    }
+                }
+            }
         }
     }
+
 
 //    public function saveFailed(PrintResultEvent $event): void
 //    {
@@ -107,4 +116,4 @@ class RunDiff extends Extension
 //        }
 //        return $path;
 //    }
-}
+    }
