@@ -68,19 +68,17 @@ class RunDiff extends Extension
     public function build()
     {
         $commitHash = exec('git rev-parse HEAD');
-        echo "commit_hash:" . $commitHash . "\n";
-
         // Get the changed files between the current branch and the master branch
         exec('git diff --name-only master...HEAD', $changed_files);
-        print_r($changed_files);
-        echo '_______________' . "\n";
+
         // Iterate over each changed file
         foreach ($changed_files as $file) {
             // Check if the file is a PHP file
             if (pathinfo($file, PATHINFO_EXTENSION) === 'php') {
                 // Get the diff of the changes in the file for the specified commit hash
                 exec("git diff {$commitHash}..HEAD -- {$file}", $diff);
-
+                print_r($diff);
+                echo '_______________' . "\n";
                 // Iterate over each line in the diff
                 foreach ($diff as $line) {
                     // Check if the line contains a function declaration
