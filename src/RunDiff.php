@@ -76,29 +76,33 @@ class RunDiff extends Extension
 //        echo $diff;
         // Get the changed files between the current branch and the master branch
         exec('git diff --name-only master...HEAD', $changed_files);
-        foreach ($changed_files as $file) {
-            exec('git diff master... ' . $file, $output);
-            print_r($output);
-            $code = file_get_contents($file);
+        foreach ($changed_files as $diff) {
+            exec('git diff master... ' . $diff, $output);
+echo "file:" .  $output[0] . "\n";
 
-            $parser = (new ParserFactory)->create(ParserFactory::PREFER_PHP7);
-            $traverser = new NodeTraverser;
-            $traverser->addVisitor(new NameResolver);
-
-            try {
-                $stmts = $parser->parse($code);
-                $stmts = $traverser->traverse($stmts);
-
-                // Extract the changed functions
-                foreach ($stmts as $stmt) {
-                    if ($stmt instanceof \PhpParser\Node\Stmt\Function_) {
-                        echo 'Changed function: ' . $stmt->name->name . PHP_EOL;
-                    }
-                }
-            } catch (Error $error) {
-                echo 'Error parsing file: ' . $file . PHP_EOL;
-            }
-
+// Parse each file and extract the changed functions
+//foreach ($files as $file) {
+//    if (!empty($file)) {
+//        $code = file_get_contents($file);
+//
+//        $parser = (new ParserFactory)->create(ParserFactory::PREFER_PHP7);
+//        $traverser = new NodeTraverser;
+//        $traverser->addVisitor(new NameResolver);
+//
+//        try {
+//            $stmts = $parser->parse($code);
+//            $stmts = $traverser->traverse($stmts);
+//
+//            // Extract the changed functions
+//            foreach ($stmts as $stmt) {
+//                if ($stmt instanceof \PhpParser\Node\Stmt\Function_) {
+//                    echo 'Changed function: ' . $stmt->name->name . PHP_EOL;
+//                }
+//            }
+//        } catch (Error $error) {
+//            echo 'Error parsing file: ' . $file . PHP_EOL;
+//        }
+//    }
         }
 
 //
