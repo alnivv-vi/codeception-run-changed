@@ -74,11 +74,11 @@ class RunDiff extends Extension
 
 // Get all files in the current branch that have changes compared to the master branch
         $modifiedFiles = shell_exec("git diff --name-only master...HEAD");
-        var_dump($modifiedFiles);
+//        var_dump($modifiedFiles);
 
 // Filter the modified files to keep only those whose name ends with "Cest"
         $modifiedFiles = array_filter(explode("\n", $modifiedFiles), function ($file) {
-            return substr($file, -4) === 'Cest';
+            return substr($file, -8) === "Cest.php";
         });
 
 // Display the modified files
