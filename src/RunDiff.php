@@ -49,14 +49,6 @@ use PhpParser\ParserFactory;
  */
 class RunDiff extends Extension
 {
-    /**
-     * @var array<string, string>
-     */
-//    public static array $events = [
-//        Events::RESULT_PRINT_AFTER => 'saveFailed'
-//    ];
-
-    /** @var string filename/groupname for failed tests */
     protected string $group = 'diff';
 
     public function _initialize(): void
@@ -66,25 +58,21 @@ class RunDiff extends Extension
         }
         $logPath = str_replace($this->getRootDir(), '', $this->getLogDir()); // get local path to logs
         $this->_reconfigure(['groups' => [$this->group => $logPath . $this->group]]);
-        $this->build();
+        $this->getDiffTests();
     }
 
-    public function build()
+    private function getDiffTests()
     {
-
-// Get all files in the current branch that have changes compared to the master branch
         $modifiedFiles = shell_exec("git diff --name-only master...HEAD");
-//        var_dump($modifiedFiles);
-
-// Filter the modified files to keep only those whose name ends with "Cest"
         $modifiedFiles = array_filter(explode("\n", $modifiedFiles), function ($file) {
-            return substr($file, -8) === "Cest.php";
+            return str_ends_with($file, "Cest.php");
         });
-
-// Display the modified files
-        foreach ($modifiedFiles as $modifiedFile) {
-            echo $modifiedFile . "\n";
+        foreach ($modifiedFiles as $file) {
+            $groupFile = $this->getLogDir() . $this->group;
+            if (is_file($groupFile)) {
+                unlink($groupFile);
+            }
+            file_put_contents($groupFile, implode("\n", $file));
         }
-
     }
 }
