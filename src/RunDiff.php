@@ -67,13 +67,14 @@ class RunDiff extends Extension
         $modifiedFiles = array_filter(explode("\n", $modifiedFiles), function ($file) {
             return str_ends_with($file, "Cest.php");
         });
-        foreach ($modifiedFiles as $file) {
-            var_dump($file);
-            $groupFile = $this->getLogDir() . $this->group;
-            if (is_file($groupFile)) {
-                unlink($groupFile);
-            }
-            file_put_contents($groupFile, implode("\n", $file));
+        $output = [];
+        $groupFile = $this->getLogDir() . $this->group;
+        if (is_file($groupFile)) {
+            unlink($groupFile);
         }
+        foreach ($modifiedFiles as $file) {
+            $output[] = $file;
+        }
+        file_put_contents($groupFile, implode("\n", $output));
     }
 }
