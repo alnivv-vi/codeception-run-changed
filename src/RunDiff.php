@@ -78,7 +78,7 @@ class RunDiff extends Extension
         exec('git diff --name-only master...HEAD', $changed_files);
         foreach ($changed_files as $diff) {
             exec('git diff master... ' . $diff, $output);
-echo "file:" .  $output[0] . "\n";
+print_r($output) ;
 
 // Parse each file and extract the changed functions
 //foreach ($files as $file) {
