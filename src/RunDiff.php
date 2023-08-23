@@ -68,6 +68,7 @@ class RunDiff extends Extension
             return str_ends_with($file, "Cest.php");
         });
         foreach ($modifiedFiles as $file) {
+            var_dump($file);
             $groupFile = $this->getLogDir() . $this->group;
             if (is_file($groupFile)) {
                 unlink($groupFile);
