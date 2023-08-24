@@ -1,8 +1,8 @@
 {
-    "name": "alnivv-vi/codeception-run-diff",
+    "name": "alnivv-vi/codeception-run-changed",
     "keywords":["codeception", "testing", "php", "diff", "gitlab", "run"],
     "description": "run tests suite with Codeception only for files with changes",
-    "homepage": "https://github.com/alnivv-vi/codeception-run-diff",
+    "homepage": "https://github.com/alnivv-vi/codeception-run-changed",
     "license": "MIT",
     "authors": [
         {
