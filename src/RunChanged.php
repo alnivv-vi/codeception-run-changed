@@ -47,7 +47,7 @@ class RunChanged extends Extension
 
     private function getChangedTests()
     {
-        $modifiedFiles = shell_exec("git diff --name-only master...HEAD");
+        $modifiedFiles = shell_exec("git diff --name-only origin/master...HEAD");
         $modifiedFiles = array_filter(explode("\n", $modifiedFiles), function ($file) {
             return str_ends_with($file, "Cest.php");
         });
