@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Codeception\Extension;
+namespace Codeception;
 
 use function array_key_exists;
 use function file_put_contents;
