@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Codeception\Extension;
 
-use Codeception\Extension;
-
 use function array_key_exists;
 use function file_put_contents;
 use function implode;
@@ -48,17 +46,19 @@ class RunChanged extends Extension
     private function getChangedTests()
     {
         $modifiedFiles = shell_exec("git diff --name-only origin/master...HEAD");
-        $modifiedFiles = array_filter(explode("\n", $modifiedFiles), function ($file) {
-            return str_ends_with($file, "Cest.php");
-        });
-        $output = [];
-        $groupFile = $this->getLogDir() . $this->group;
-        if (is_file($groupFile)) {
-            unlink($groupFile);
+        if ($modifiedFiles) {
+            $modifiedFiles = array_filter(explode("\n", $modifiedFiles), function ($file) {
+                return str_ends_with($file, "Cest.php");
+            });
+            $output = [];
+            $groupFile = $this->getLogDir() . $this->group;
+            if (is_file($groupFile)) {
+                unlink($groupFile);
+            }
+            foreach ($modifiedFiles as $file) {
+                $output[] = $file;
+            }
+            file_put_contents($groupFile, implode("\n", $output));
         }
-        foreach ($modifiedFiles as $file) {
-            $output[] = $file;
-        }
-        file_put_contents($groupFile, implode("\n", $output));
     }
 }
