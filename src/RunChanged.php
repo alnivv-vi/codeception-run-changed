@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Codeception;
 
+use Codeception\Event\PrintResultEvent;
+use Codeception\Test\Descriptor;
 use function array_key_exists;
 use function file_put_contents;
 use function implode;
@@ -32,6 +34,7 @@ use function unlink;
 class RunChanged extends Extension
 {
     protected string $group = 'changed';
+    private const BRANCH_NAME_PARAM = 'branch_name';
 
     public function _initialize(): void
     {
@@ -45,7 +48,8 @@ class RunChanged extends Extension
 
     private function getChangedTests()
     {
-        $modifiedFiles = shell_exec("git diff --name-only origin/master...HEAD");
+        $branchName = $this->getBranchName();
+        $modifiedFiles = shell_exec("git diff --name-only $branchName...HEAD");
         if ($modifiedFiles) {
             $modifiedFiles = array_filter(explode("\n", $modifiedFiles), function ($file) {
                 return str_ends_with($file, "Cest.php");
@@ -60,5 +64,10 @@ class RunChanged extends Extension
             }
             file_put_contents($groupFile, implode("\n", $output));
         }
+    }
+
+    private function getBranchName()
+    {
+        return $this->config[self::BRANCH_NAME_PARAM] ?? 'origin/master';
     }
 }
